@@ -1,0 +1,259 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Real-Time Messaging API",
+    "version": "0.1.0",
+    "description": "HTTP API for authentication, conversations, messages, presence and search."
+  },
+  "tags": [
+    { "name": "System", "description": "Health and system endpoints" },
+    { "name": "Auth", "description": "Authentication and token endpoints" },
+    { "name": "Users", "description": "User directory endpoints" },
+    { "name": "Conversations", "description": "Conversation listing and details" },
+    { "name": "Messages", "description": "Message CRUD and read flow" },
+    { "name": "Presence", "description": "Online users and counts" },
+    { "name": "Search", "description": "Full‑text message search" }
+  ],
+  "servers": [
+    { "url": "http://localhost:3000" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "responses": {
+      "BadRequest": { "description": "Bad request / validation error" },
+      "Unauthorized": { "description": "Unauthorized" },
+      "Forbidden": { "description": "Forbidden" },
+      "NotFound": { "description": "Not found" },
+      "Conflict": { "description": "Conflict / duplicate" },
+      "TooManyRequests": { "description": "Rate limit exceeded" },
+      "ServerError": { "description": "Internal server error" }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "username": { "type": "string" },
+          "email": { "type": "string" },
+          "isActive": { "type": "boolean" },
+          "lastOnlineAt": { "type": "string", "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Conversation": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "participants": { "type": "array", "items": { "type": "string" } },
+          "type": { "type": "string", "enum": ["direct", "group"] },
+          "lastMessageAt": { "type": "string", "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "conversationId": { "type": "string" },
+          "senderId": { "type": "string" },
+          "content": { "type": "string" },
+          "status": { "type": "string", "enum": ["sent", "delivered", "read"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "deliveredAt": { "type": "string", "format": "date-time" },
+          "readAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health",
+        "tags": ["System"],
+        "responses": {
+          "200": { "description": "OK" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "properties": { "username": {"type":"string"}, "email": {"type":"string"}, "password": {"type":"string"} }, "required": ["username","email","password"] } } }
+        },
+        "responses": {
+          "200": { "description": "OK" },
+          "BadRequest": { "$ref": "#/components/responses/BadRequest" },
+          "Conflict": { "$ref": "#/components/responses/Conflict" },
+          "TooManyRequests": { "$ref": "#/components/responses/TooManyRequests" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Login",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "properties": { "email": {"type":"string"}, "password": {"type":"string"} }, "required": ["email","password"] } } }
+        },
+        "responses": {
+          "200": { "description": "OK" },
+          "BadRequest": { "$ref": "#/components/responses/BadRequest" },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "TooManyRequests": { "$ref": "#/components/responses/TooManyRequests" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "summary": "Refresh",
+        "tags": ["Auth"],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type":"object", "properties": { "refreshToken": {"type":"string"} }, "required":["refreshToken"] } } } },
+        "responses": {
+          "200": { "description": "OK" },
+          "BadRequest": { "$ref": "#/components/responses/BadRequest" },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "TooManyRequests": { "$ref": "#/components/responses/TooManyRequests" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "tags": ["Auth"],
+        "requestBody": { "required": false, "content": { "application/json": { "schema": { "type":"object", "properties": { "refreshToken": {"type":"string"} } } } } },
+        "responses": {
+          "200": { "description": "OK" },
+          "TooManyRequests": { "$ref": "#/components/responses/TooManyRequests" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "summary": "Me",
+        "tags": ["Auth"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/User" } } } },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "NotFound": { "$ref": "#/components/responses/NotFound" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/user/list": {
+      "get": {
+        "summary": "List users",
+        "tags": ["Users"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [ {"name":"page","in":"query","schema":{"type":"integer"}}, {"name":"limit","in":"query","schema":{"type":"integer"}}, {"name":"q","in":"query","schema":{"type":"string"}} ],
+        "responses": {
+          "200": { "description": "OK" },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/conversations": {
+      "get": {
+        "summary": "List conversations",
+        "tags": ["Conversations"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [ {"name":"page","in":"query","schema":{"type":"integer"}}, {"name":"limit","in":"query","schema":{"type":"integer"}} ],
+        "responses": {
+          "200": { "description": "OK" },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/conversations/{id}": {
+      "get": {
+        "summary": "Conversation detail",
+        "tags": ["Conversations"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [ {"name":"id","in":"path","required":true,"schema":{"type":"string"}} ],
+        "responses": {
+          "200": { "description": "OK" },
+          "BadRequest": { "$ref": "#/components/responses/BadRequest" },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "NotFound": { "$ref": "#/components/responses/NotFound" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/conversations/{id}/messages": {
+      "get": {
+        "summary": "List messages",
+        "tags": ["Messages"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [ {"name":"id","in":"path","required":true,"schema":{"type":"string"}}, {"name":"page","in":"query","schema":{"type":"integer"}}, {"name":"limit","in":"query","schema":{"type":"integer"}}, {"name":"sort","in":"query","schema":{"type":"string"}}, {"name":"before","in":"query","schema":{"type":"string"}}, {"name":"after","in":"query","schema":{"type":"string"}} ],
+        "responses": {
+          "200": { "description": "OK" },
+          "BadRequest": { "$ref": "#/components/responses/BadRequest" },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "NotFound": { "$ref": "#/components/responses/NotFound" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/messages": {
+      "post": {
+        "summary": "Create message",
+        "tags": ["Messages"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "oneOf": [
+            { "type":"object", "properties": { "conversationId": {"type":"string"}, "content": {"type":"string"} }, "required": ["conversationId","content"] },
+            { "type":"object", "properties": { "toUserId": {"type":"string"}, "content": {"type":"string"} }, "required": ["toUserId","content"] }
+          ] } } }
+        },
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Message" } } } },
+          "BadRequest": { "$ref": "#/components/responses/BadRequest" },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "NotFound": { "$ref": "#/components/responses/NotFound" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/messages/{id}/read": {
+      "post": {
+        "summary": "Read message",
+        "tags": ["Messages"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [ {"name":"id","in":"path","required":true,"schema":{"type":"string"}} ],
+        "responses": {
+          "200": { "description": "OK" },
+          "BadRequest": { "$ref": "#/components/responses/BadRequest" },
+          "Unauthorized": { "$ref": "#/components/responses/Unauthorized" },
+          "Forbidden": { "$ref": "#/components/responses/Forbidden" },
+          "NotFound": { "$ref": "#/components/responses/NotFound" },
+          "ServerError": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/online/count": {
+      "get": { "summary": "Online count", "tags": ["Presence"], "security": [{"BearerAuth":[]}], "responses": { "200": { "description": "OK" }, "Unauthorized": { "$ref": "#/components/responses/Unauthorized" }, "ServerError": { "$ref": "#/components/responses/ServerError" } } }
+    },
+    "/api/online/list": {
+      "get": { "summary": "Online list", "tags": ["Presence"], "security": [{"BearerAuth":[]}], "responses": { "200": { "description": "OK" }, "Unauthorized": { "$ref": "#/components/responses/Unauthorized" }, "ServerError": { "$ref": "#/components/responses/ServerError" } } }
+    },
+    "/api/search/messages": {
+      "get": { "summary": "Search messages", "tags": ["Search"], "security": [{"BearerAuth":[]}], "parameters": [ {"name":"q","in":"query","required":true,"schema":{"type":"string"}}, {"name":"page","in":"query","schema":{"type":"integer"}}, {"name":"limit","in":"query","schema":{"type":"integer"}} ], "responses": { "200": { "description": "OK" }, "Unauthorized": { "$ref": "#/components/responses/Unauthorized" }, "ServerError": { "$ref": "#/components/responses/ServerError" } } }
+    }
+  }
+}
