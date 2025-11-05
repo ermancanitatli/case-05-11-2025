@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Mongoose schema: Conversation.
 'use strict';
 
 const { Schema, model, Types } = require('mongoose');

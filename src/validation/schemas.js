@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Celebrate/Joi schemas for API validation.
 'use strict';
 
 const { celebrate, Joi, Segments } = require('celebrate');
@@ -77,4 +79,3 @@ const messages = {
 };
 
 module.exports = { auth, users, conversations, messages };
-

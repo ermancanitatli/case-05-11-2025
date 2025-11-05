@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Redis client utilities.
 'use strict';
 
 const Redis = require('ioredis');
@@ -6,6 +8,7 @@ const logger = require('../utils/logger');
 
 let client;
 
+// Returns a singleton Redis client.
 function getRedis() {
   if (!client) {
     client = new Redis(config.redis.url);
@@ -13,6 +16,7 @@ function getRedis() {
   return client;
 }
 
+// Connects to Redis if needed.
 async function connectRedis() {
   const c = getRedis();
   if (c.status === 'ready' || c.status === 'connecting') return c;
@@ -26,6 +30,7 @@ async function connectRedis() {
   }
 }
 
+// Disconnects Redis client.
 async function disconnectRedis() {
   if (!client) return;
   try {

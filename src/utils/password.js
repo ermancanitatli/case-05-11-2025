@@ -1,7 +1,10 @@
+// Author: Erman CANITATLI
+// Simple scrypt-based password helper.
 'use strict';
 
 const crypto = require('crypto');
 
+// Produces a salted scrypt hash.
 function hashPassword(password) {
   const salt = crypto.randomBytes(16);
   const pwd = Buffer.from(String(password));
@@ -10,6 +13,7 @@ function hashPassword(password) {
   return out;
 }
 
+// Verifies a password against stored hash.
 function verifyPassword(password, stored) {
   const raw = Buffer.from(String(stored), 'base64');
   const salt = raw.subarray(0, 16);
@@ -20,4 +24,3 @@ function verifyPassword(password, stored) {
 }
 
 module.exports = { hashPassword, verifyPassword };
-

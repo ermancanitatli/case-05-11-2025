@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// RabbitMQ channel and helpers.
 'use strict';
 
 const amqp = require('amqplib');
@@ -7,6 +9,7 @@ const logger = require('../utils/logger');
 let connection;
 let channel;
 
+// Opens AMQP connection and declares queues.
 async function connectMQ() {
   if (channel) return channel;
   try {
@@ -44,6 +47,7 @@ function getChannel() {
   return channel;
 }
 
+// Publishes a JSON message to a queue.
 async function publishToQueue(queue, payload, opts = {}) {
   const ch = await connectMQ();
   const body = Buffer.from(JSON.stringify(payload));
@@ -51,6 +55,7 @@ async function publishToQueue(queue, payload, opts = {}) {
   return ok;
 }
 
+// Gracefully closes channel and connection.
 async function closeMQ() {
   try {
     if (channel) {

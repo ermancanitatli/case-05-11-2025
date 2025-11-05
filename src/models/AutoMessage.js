@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Mongoose schema: AutoMessage.
 'use strict';
 
 const { Schema, model, Types } = require('mongoose');

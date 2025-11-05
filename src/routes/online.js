@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Online presence endpoints.
 'use strict';
 
 const { Router } = require('express');
@@ -24,4 +26,3 @@ router.get('/list', auth, async (req, res) => {
 });
 
 module.exports = router;
-

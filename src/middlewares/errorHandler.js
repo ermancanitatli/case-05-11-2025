@@ -1,8 +1,11 @@
+// Author: Erman CANITATLI
+// Express error handler.
 'use strict';
 
 const logger = require('../utils/logger');
 const monitoring = require('../lib/monitoring');
 
+// Normalizes errors to { success: false, error }.
 function errorHandler(err, req, res, next) {
   const status = err.status || err.statusCode || 500;
   const code = err.code || 'INTERNAL_ERROR';

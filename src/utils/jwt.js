@@ -1,15 +1,20 @@
+// Author: Erman CANITATLI
+// Tiny HS256 JWT signer/verifier.
 'use strict';
 
 const crypto = require('crypto');
 
+// Base64url encode.
 function b64url(buf) {
   return Buffer.from(buf).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
 
+// Base64url JSON encode.
 function b64urlJSON(obj) {
   return b64url(Buffer.from(JSON.stringify(obj)));
 }
 
+// Signs a payload with HS256.
 function sign(payload, secret, expiresInSeconds) {
   const header = { alg: 'HS256', typ: 'JWT' };
   const now = Math.floor(Date.now() / 1000);
@@ -22,6 +27,7 @@ function sign(payload, secret, expiresInSeconds) {
   return `${data}.${sig}`;
 }
 
+// Verifies signature and exp.
 function verify(token, secret) {
   const parts = String(token).split('.');
   if (parts.length !== 3) throw new Error('INVALID_TOKEN');

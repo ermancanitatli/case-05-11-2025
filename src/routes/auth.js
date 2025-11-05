@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Auth endpoints: register/login/refresh/logout/me.
 'use strict';
 
 const { Router } = require('express');

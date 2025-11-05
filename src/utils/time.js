@@ -1,5 +1,8 @@
+// Author: Erman CANITATLI
+// Small duration parser like '15m', '7d'.
 'use strict';
 
+// Parses duration strings into seconds.
 function parseDurationToSeconds(input) {
   if (!input) return 0;
   if (typeof input === 'number') return input;
@@ -15,4 +18,3 @@ function parseDurationToSeconds(input) {
 }
 
 module.exports = { parseDurationToSeconds };
-

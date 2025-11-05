@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Socket.IO setup and events.
 'use strict';
 
 const { Server } = require('socket.io');
@@ -10,6 +12,7 @@ const { Types } = require('mongoose');
 const { setIO } = require('./io');
 const search = require('../services/search');
 
+// Wires up authentication and messaging events.
 function setup(server) {
   const io = new Server(server, { cors: { origin: true, credentials: true } });
   setIO(io);

@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// User listing endpoint.
 'use strict';
 
 const { Router } = require('express');
@@ -6,6 +8,7 @@ const { User } = require('../models');
 const auth = require('../middlewares/auth');
 const { users: v } = require('../validation/schemas');
 
+// Lists users with simple pagination.
 router.get('/list', auth, v.list, async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page || '1', 10));

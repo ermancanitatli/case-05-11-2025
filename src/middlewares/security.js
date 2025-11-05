@@ -1,9 +1,12 @@
+// Author: Erman CANITATLI
+// Helmet, CORS and compression presets.
 'use strict';
 
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 
+// Returns security middlewares per environment.
 function securityMiddlewares() {
   const env = process.env.NODE_ENV || 'development';
   if (env === 'production') {

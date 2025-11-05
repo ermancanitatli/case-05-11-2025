@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Mongoose schema: User.
 'use strict';
 
 const { Schema, model } = require('mongoose');

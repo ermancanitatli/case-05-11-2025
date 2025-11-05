@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Simple Express app factory.
 'use strict';
 
 const express = require('express');
@@ -9,6 +11,7 @@ const { apiLimiter } = require('./middlewares/rateLimit');
 const { errors } = require('celebrate');
 const httpLogger = require('./middlewares/requestLogger');
 
+// Creates and configures the Express app.
 function createApp() {
   const app = express();
 

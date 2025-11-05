@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Simple message search endpoint.
 'use strict';
 
 const { Router } = require('express');
@@ -20,4 +22,3 @@ router.get('/messages', auth, async (req, res) => {
 });
 
 module.exports = router;
-

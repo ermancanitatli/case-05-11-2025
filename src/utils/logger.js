@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Pino logger with pretty output in dev.
 'use strict';
 
 const pino = require('pino');

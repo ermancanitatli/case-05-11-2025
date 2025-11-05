@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// API route registry.
 'use strict';
 
 const { Router } = require('express');
@@ -10,6 +12,7 @@ const onlineRoutes = require('./online');
 const searchRoutes = require('./search');
 const docsRoutes = require('./openapi');
 
+// Simple health endpoint.
 router.get('/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok', uptime: process.uptime() } });
 });

@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Central configuration.
 'use strict';
 
 require('dotenv').config();

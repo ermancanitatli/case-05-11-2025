@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Boots the HTTP server and realtime stack.
 'use strict';
 
 const http = require('http');
@@ -12,6 +14,7 @@ const messageConsumer = require('./workers/messageConsumer');
 const autoMessagePlanner = require('./jobs/autoMessagePlanner');
 const monitoring = require('./lib/monitoring');
 
+// Starts HTTP server and background workers.
 async function bootstrap() {
   const app = createApp();
   const server = http.createServer(app);

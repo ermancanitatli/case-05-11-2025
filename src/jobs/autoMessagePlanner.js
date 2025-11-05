@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Simple daily/minute auto-message planner.
 'use strict';
 
 const { User, AutoMessage } = require('../models');
@@ -49,6 +51,7 @@ function randomFutureDate() {
   return new Date(now + ms);
 }
 
+// Creates paired auto-messages for active users.
 async function planOnce() {
   const users = await User.find({ isActive: true, isDeleted: false }).select('_id').lean();
   if (!users || users.length < 2) return 0;
@@ -89,10 +92,10 @@ async function dailyPlannerJob() {
   }
 }
 
+// Starts planner timers.
 function start() {
   setInterval(dailyPlannerJob, 30000);
   setInterval(minuteQueueJob, 60000);
 }
 
 module.exports = { start };
-

@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Small Redis list cache for recent messages.
 'use strict';
 
 const { getRedis } = require('../lib/redis');
@@ -9,6 +11,7 @@ function key(convId) {
   return `conv:${String(convId)}:messages`;
 }
 
+// Pushes a message into the cache list.
 async function addMessage(convId, message) {
   const r = getRedis();
   const payload = JSON.stringify(message);
@@ -16,6 +19,7 @@ async function addMessage(convId, message) {
   await r.multi().lpush(k, payload).ltrim(k, 0, MAX - 1).expire(k, TTL).exec();
 }
 
+// Reads last N cached messages.
 async function getRecentMessages(convId, limit) {
   const r = getRedis();
   const k = key(convId);
@@ -28,4 +32,3 @@ async function getRecentMessages(convId, limit) {
 }
 
 module.exports = { addMessage, getRecentMessages };
-

@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// RabbitMQ consumer for auto-messages.
 'use strict';
 
 const { connectMQ, getChannel } = require('../lib/mq');
@@ -8,6 +10,7 @@ const { getIO } = require('../realtime/io');
 
 let consumerTag = null;
 
+// Returns retry count from x-death header for the queue.
 function getDeathCount(msg, queueName) {
   const h = (msg.properties && msg.properties.headers) || {};
   const deaths = h['x-death'] || [];
@@ -15,6 +18,7 @@ function getDeathCount(msg, queueName) {
   return item && item.count ? Number(item.count) : 0;
 }
 
+// Creates a message from an auto-message task and notifies sockets.
 async function handleTask(task) {
   const senderId = new Types.ObjectId(task.senderId);
   const receiverId = new Types.ObjectId(task.receiverId);
@@ -29,6 +33,7 @@ async function handleTask(task) {
   if (io) io.to(`conversation:${String(conv._id)}`).emit('message_received', msg.toJSON());
 }
 
+// Starts consuming the main message queue.
 async function start() {
   await connectMQ();
   const ch = getChannel();
@@ -54,6 +59,7 @@ async function start() {
   consumerTag = tag && tag.consumerTag ? tag.consumerTag : null;
 }
 
+// Stops the consumer if running.
 async function stop() {
   const ch = getChannel();
   if (ch && consumerTag) {
@@ -63,4 +69,3 @@ async function stop() {
 }
 
 module.exports = { start, stop };
-

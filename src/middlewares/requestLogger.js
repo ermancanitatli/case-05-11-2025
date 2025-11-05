@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Pino HTTP logger middleware.
 'use strict';
 
 const pinoHttp = require('pino-http');
@@ -9,4 +11,3 @@ const httpLogger = pinoHttp({
 });
 
 module.exports = httpLogger;
-

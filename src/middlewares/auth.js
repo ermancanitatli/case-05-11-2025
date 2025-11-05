@@ -1,9 +1,12 @@
+// Author: Erman CANITATLI
+// Bearer JWT auth middleware.
 'use strict';
 
 const config = require('../config');
 const { verify } = require('../utils/jwt');
 const { User } = require('../models');
 
+// Verifies token and sets req.user.
 async function auth(req, res, next) {
   try {
     const authHeader = req.headers['authorization'] || '';
@@ -24,4 +27,3 @@ async function auth(req, res, next) {
 }
 
 module.exports = auth;
-

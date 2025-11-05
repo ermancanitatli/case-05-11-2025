@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Model exports in one place.
 'use strict';
 
 module.exports = {
@@ -6,4 +8,3 @@ module.exports = {
   Message: require('./Message'),
   AutoMessage: require('./AutoMessage')
 };
-

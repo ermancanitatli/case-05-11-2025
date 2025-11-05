@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// MongoDB connection helpers.
 'use strict';
 
 const mongoose = require('mongoose');
@@ -6,6 +8,7 @@ const logger = require('../utils/logger');
 
 let connected = false;
 
+// Connects to MongoDB.
 async function connectDB() {
   if (connected) return mongoose;
   mongoose.set('strictQuery', true);
@@ -23,6 +26,7 @@ async function connectDB() {
   }
 }
 
+// Closes MongoDB connection.
 async function disconnectDB() {
   if (!connected) return;
   await mongoose.connection.close();
@@ -31,4 +35,3 @@ async function disconnectDB() {
 }
 
 module.exports = { connectDB, disconnectDB };
-

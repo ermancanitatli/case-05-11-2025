@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Optional Elasticsearch client for message search.
 'use strict';
 
 const { Client } = require('@elastic/elasticsearch');
@@ -5,12 +7,14 @@ const url = process.env.ELASTICSEARCH_URL || '';
 const indexName = process.env.ELASTICSEARCH_INDEX || 'messages';
 let client = null;
 
+// Returns ES client if URL is provided.
 function getClient() {
   if (!url) return null;
   if (!client) client = new Client({ node: url });
   return client;
 }
 
+// Creates index lazily on first use.
 async function ensureIndex() {
   const c = getClient();
   if (!c) return false;
@@ -19,6 +23,7 @@ async function ensureIndex() {
   return true;
 }
 
+// Indexes a message document.
 async function indexMessage(msg) {
   const c = getClient();
   if (!c) return;
@@ -26,6 +31,7 @@ async function indexMessage(msg) {
   await c.index({ index: indexName, id: String(msg.id || msg._id), document: { conversationId: String(msg.conversationId), senderId: String(msg.senderId), content: String(msg.content), createdAt: msg.createdAt } });
 }
 
+// Full‑text search on messages.
 async function searchMessages(q, opts = {}) {
   const c = getClient();
   if (!c) return { items: [], total: 0 };
@@ -35,4 +41,3 @@ async function searchMessages(q, opts = {}) {
 }
 
 module.exports = { indexMessage, searchMessages };
-

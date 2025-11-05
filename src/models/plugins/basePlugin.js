@@ -1,5 +1,8 @@
+// Author: Erman CANITATLI
+// Soft-delete + timestamps plugin for Mongoose.
 'use strict';
 
+// Attaches soft-delete helpers to a schema.
 module.exports = function basePlugin(schema) {
   schema.add({
     isDeleted: { type: Boolean, default: false, index: true },

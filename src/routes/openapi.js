@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Serves Swagger UI and JSON.
 'use strict';
 
 const { Router } = require('express');
@@ -12,4 +14,3 @@ router.get('/openapi.json', (req, res) => {
 router.use('/docs', swaggerUi.serve, swaggerUi.setup(spec));
 
 module.exports = router;
-

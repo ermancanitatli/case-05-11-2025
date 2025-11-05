@@ -1,3 +1,5 @@
+// Author: Erman CANITATLI
+// Rate limiters for API and auth.
 'use strict';
 
 const rateLimit = require('express-rate-limit');
@@ -7,4 +9,3 @@ const apiLimiter = rateLimit({ windowMs: config.rateLimit.windowMs, max: config.
 const authLimiter = rateLimit({ windowMs: config.rateLimit.windowMs, max: config.rateLimit.authMax, standardHeaders: true, legacyHeaders: false });
 
 module.exports = { apiLimiter, authLimiter };
-
